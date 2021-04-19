@@ -39,7 +39,7 @@ const startMenu = () => {
           viewAllEm();
           break;
         case "VIEW EMPLOYEES BY DEPARTMENT":
-          sortEmbyDept();
+          sortEmDept();
           break;
         case "VIEW EMPLOYEES BY ROLE":
           sortEmByRole();
@@ -81,28 +81,33 @@ const viewAllEm = () => {
   // query the database for all items being auctioned
   connection.query("SELECT * FROM employee", (err, results) => {
     if (err) throw err;
-    inquirer.prompt([
-      {
-        name: "choice",
-        type: "list",
-        choices() {
-          const choiceArray = [];
-          results.forEach(({ first_name }) => {
-            choiceArray.push(first_name);
-          });
-          return choiceArray;
+    inquirer
+      .prompt([
+        {
+          name: "choice",
+          type: "list",
+          choices() {
+            const choiceArray = ["exit"];
+            results.forEach(({ first_name }) => {
+              choiceArray.push(first_name);
+            });
+            return choiceArray;
+          },
+          message: "ALL EMPLOYEES",
         },
-        message: "ALL EMPLOYEES",
-      },
-      (err) => {
-        if (err) throw err;
-        console.log("You");
-        // re-prompt the user for if they want to bid or post
+        {
+          name: "return",
+          type: "confirm",
+          message: "RETURN TO MAIN MENU?",
+        },
+      ])
+      .then((answer) => {
+        console.log(answer.return);
         startMenu();
-      },
-    ]);
+      });
   });
 };
+
 const addEm = () => {
   // prompt for info about the item being put up for auction
   inquirer.prompt([
