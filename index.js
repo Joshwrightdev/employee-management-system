@@ -112,50 +112,44 @@ const addEm = () => {
   // prompt for info about the item being put up for auction
   inquirer.prompt([
     {
-      name: "item",
+      name: "firstName",
       type: "input",
-      message: "What is the item you would like to submit?",
+      message: "EMPLOYEE FIRST NAME",
     },
     {
-      name: "category",
+      name: "lastname",
       type: "input",
-      message: "What category would you like to place your auction in?",
+      message: "EMPLOYEE LAST NAME",
     },
     {
-      name: "startingBid",
+      name: "role",
       type: "input",
-      message: "What would you like your starting bid to be?",
-      validate(value) {
-        if (isNaN(value) === false) {
-          return true;
-        }
-        return false;
+      message: "EMPLOYEE'S ROLE",
+    },
+    {
+      name: "manager",
+      type: "input",
+      message: "EMPLOYEE'S MANAGER (IF NO MANAGER EXIST, DISREGARD) "
+    }
+    
+  ])
+  .then((answer) => {
+    connection.query(
+      "INSERT INTO employee ?",
+   
+      {
+        first_name: answer.firstName  
       },
-    },
-  ]);
-  // .then((answer) => {
-  //   // when finished prompting, insert a new item into the db with that info
-  //   connection.query(
-  //     "INSERT INTO auctions SET ?",
-  //     // QUESTION: What does the || 0 do?
-  //     {
-  //       item_name: answer.item,
-  //       category: answer.category,
-  //       starting_bid: answer.startingBid || 0,
-  //       highest_bid: answer.startingBid || 0,
-  //     },
-  //     (err) => {
-  //       if (err) throw err;
-  //       console.log("Your auction was created successfully!");
-  //       // re-prompt the user for if they want to bid or post
-  //       start();
-  //     }
-  //   );
-  // });
-};
+      (err) => {
+        if (err) throw err;
+        console.log("You did it yayyyy!");
+       startMenu();
+      }
+    );
+  });
+
 
 connection.connect((err) => {
   if (err) throw err;
-  // run the start function after the connection is made to prompt the user
   startMenu();
 });
