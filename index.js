@@ -110,44 +110,44 @@ const viewAllEm = () => {
 
 const addEm = () => {
   // prompt for info about the item being put up for auction
-  inquirer.prompt([
-    {
-      name: "firstName",
-      type: "input",
-      message: "EMPLOYEE FIRST NAME",
-    },
-    {
-      name: "lastname",
-      type: "input",
-      message: "EMPLOYEE LAST NAME",
-    },
-    {
-      name: "role",
-      type: "input",
-      message: "EMPLOYEE'S ROLE",
-    },
-    {
-      name: "manager",
-      type: "input",
-      message: "EMPLOYEE'S MANAGER (IF NO MANAGER EXIST, DISREGARD) "
-    }
-    
-  ])
-  .then((answer) => {
-    connection.query(
-      "INSERT INTO employee ?",
-   
+  inquirer
+    .prompt([
       {
-        first_name: answer.firstName  
+        name: "firstName",
+        type: "input",
+        message: "EMPLOYEE FIRST NAME",
       },
-      (err) => {
-        if (err) throw err;
-        console.log("You did it yayyyy!");
-       startMenu();
-      }
-    );
-  });
+      {
+        name: "lastname",
+        type: "input",
+        message: "EMPLOYEE LAST NAME",
+      },
+      {
+        name: "role",
+        type: "input",
+        message: "EMPLOYEE'S ROLE",
+      },
+      {
+        name: "manager",
+        type: "input",
+        message: "EMPLOYEE'S MANAGER (IF NO MANAGER EXIST, DISREGARD) ",
+      },
+    ])
+    .then((answer) => {
+      connection.query(
+        "INSERT INTO employee ?",
 
+        {
+          first_name: answer.firstName,
+        },
+        (err) => {
+          if (err) throw err;
+          console.log("You did it yayyyy!");
+          startMenu();
+        }
+      );
+    });
+};
 
 connection.connect((err) => {
   if (err) throw err;
