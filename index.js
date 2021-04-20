@@ -78,42 +78,17 @@ const startMenu = () => {
     });
 };
 const viewAllEm = () => {
-  // query the database for all items being auctioned
-  connection.query("SELECT * FROM employee", (err, results) => {
-    if (err) throw err;
-    inquirer
-      .prompt([
-        {
-          name: "choice",
-          type: "list",
-          choices() {
-            const choiceArray = ["exit"];
-            results.forEach(({ first_name }) => {
-              choiceArray.push(first_name);
-            });
-            return choiceArray;
-          },
-          message: "ALL EMPLOYEES",
-        },
-        {
-          name: "return",
-          type: "confirm",
-          message: "RETURN TO MAIN MENU?",
-        },
-      ])
-      .then((answer) => {
-        console.log(answer.return);
-        startMenu();
-      });
+  connection.query("SELECT * FROM employee", function (err, data) {
+    console.table(data);
+    startMenu();
   });
 };
 
 const addEm = () => {
-  // prompt for info about the item being put up for auction
   inquirer
     .prompt([
       {
-        name: "firstName",
+        name: "firstname",
         type: "input",
         message: "EMPLOYEE FIRST NAME",
       },
@@ -123,32 +98,38 @@ const addEm = () => {
         message: "EMPLOYEE LAST NAME",
       },
       {
-        name: "role",
+        name: "roleId",
         type: "input",
         message: "EMPLOYEE'S ROLE",
       },
       {
-        name: "manager",
+        name: "managerId",
         type: "input",
         message: "EMPLOYEE'S MANAGER (IF NO MANAGER EXIST, DISREGARD) ",
       },
     ])
-    .then((answer) => {
-      connection.query(
-        "INSERT INTO employee ?",
 
+    .then(function (answer) {
+      console.log(answer);
+
+      var query = `INSERT INTO employee SET ?`;
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        query,
         {
-          first_name: answer.firstName,
+          first_name: answer.firstname,
+          last_name: answer.lastname,
+          role_id: answer.roleId,
+          manager_id: answer.managerId,
         },
-        (err) => {
+        function (err, res) {
           if (err) throw err;
-          console.log("You did it yayyyy!");
           startMenu();
         }
       );
+      // console.log(query.sql);
     });
 };
-
 connection.connect((err) => {
   if (err) throw err;
   startMenu();
