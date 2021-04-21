@@ -109,11 +109,6 @@ const addEm = () => {
         type: "input",
         message: "EMPLOYEE ROLE ID",
       },
-      {
-        name: "managerId",
-        type: "input",
-        message: "EMPLOYEE MANAGER ID",
-      },
     ])
 
     .then(function (answer) {
@@ -127,7 +122,6 @@ const addEm = () => {
           first_name: answer.firstname,
           last_name: answer.lastname,
           role_id: answer.roleId,
-          manager_id: answer.managerId,
         },
         function (err, res) {
           if (err) throw err;
