@@ -9,7 +9,6 @@ const connection = mysql.createConnection({
   password: "IT2me@2432",
   database: "employee_db",
 });
-
 const startMenu = () => {
   inquirer
     .prompt({
@@ -18,18 +17,12 @@ const startMenu = () => {
       message: "WHAT WOULD YOU LIKE TO DO?",
       choices: [
         "VIEW ALL EMPLOYEES",
-        "VIEW EMPLOYEES BY DEPARTMENT",
-        "VIEW EMPLOYEES BY ROLE",
-        "VIEW EMPLOYEES BY MANAGER",
+        "VIEW ALL ROLES",
+        "VIEW ALL DEPARTMENTS",
         "ADD EMPLOYEE",
-        "REMOVE EMPLOYEE",
         "ADD ROLE",
-        "DELETE ROLE",
         "ADD DEPARTMENT",
-        "DELETE DEPARTMENT",
         "UPDATE EMPLOYEE ROLE",
-        "UPDATE EMPLOYEE DEPARTMENT",
-        "UPDATE EMPLOYEE MANAGER",
       ],
     })
     .then((answer) => {
@@ -38,42 +31,45 @@ const startMenu = () => {
         case "VIEW ALL EMPLOYEES":
           viewAllEm();
           break;
-        case "VIEW EMPLOYEES BY DEPARTMENT":
-          sortEmDept();
+        case "VIEW ALL ROLES":
+          viewAllRoles();
           break;
-        case "VIEW EMPLOYEES BY ROLE":
-          sortEmByRole();
+        case "VIEW ALL DEPARTMENTS":
+          viewAllDepts();
           break;
-        case "VIEW EMPLOYEES BY MANAGER":
-          sortEmByMgr();
-          break;
+        // case "VIEW EMPLOYEES BY ROLE":
+        //   sortEmByRole();
+        //   break;
+        // case "VIEW EMPLOYEES BY MANAGER":
+        //   sortEmByMgr();
+        //   break;
         case "ADD EMPLOYEE":
           addEm();
           break;
-        case "REMOVE EMPLOYEE":
-          rmvEm();
-          break;
+        // case "REMOVE EMPLOYEE":
+        //   rmvEm();
+        //   break;
         case "ADD ROLE":
-          addRule();
+          addRole();
           break;
-        case "DELETE ROLE":
-          dltRole();
-          break;
+        // case "DELETE ROLE":
+        //   dltRole();
+        //   break;
         case "ADD DEPARTMENT":
           addDept();
           break;
-        case "DELETE DEPARTMENT":
-          dltDept();
+          // case "DELETE DEPARTMENT":
+          //   dltDept();
           break;
         case "UPDATE EMPLOYEE ROLE":
           updateEmRole();
           break;
-        case "UPDATE EMPLOYEE DEPARTMENT":
-          updateEmDept();
-          break;
-        case "UPDATE EMPLOYEE MANAGER":
-          updateEmManager();
-          break;
+        // case "UPDATE EMPLOYEE DEPARTMENT":
+        //   updateEmDept();
+        //   break;
+        // case "UPDATE EMPLOYEE MANAGER":
+        //   updateEmManager();
+        //   break;
       }
     });
 };
@@ -83,7 +79,18 @@ const viewAllEm = () => {
     startMenu();
   });
 };
-
+const viewAllRoles = () => {
+  connection.query("SELECT * FROM role", function (err, data) {
+    console.table(data);
+    startMenu();
+  });
+};
+const viewAllDepts = () => {
+  connection.query("SELECT * FROM department", function (err, data) {
+    console.table(data);
+    startMenu();
+  });
+};
 const addEm = () => {
   inquirer
     .prompt([
@@ -96,16 +103,6 @@ const addEm = () => {
         name: "lastname",
         type: "input",
         message: "EMPLOYEE LAST NAME",
-      },
-      {
-        name: "roleId",
-        type: "input",
-        message: "EMPLOYEE'S ROLE",
-      },
-      {
-        name: "managerId",
-        type: "input",
-        message: "EMPLOYEE'S MANAGER (IF NO MANAGER EXIST, DISREGARD) ",
       },
     ])
 
@@ -127,9 +124,108 @@ const addEm = () => {
           startMenu();
         }
       );
-      // console.log(query.sql);
     });
 };
+const addRole = () => {
+  inquirer
+    .prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "EMPLOYEE TITLE",
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "EMPLOYEE SALARY",
+      },
+      {
+        name: "deptID",
+        type: "input",
+        message: "EMPLOYEE DEPARTMENT ID",
+      },
+    ])
+
+    .then(function (answer) {
+      console.log(answer);
+
+      var query = `INSERT INTO role SET ?`;
+      connection.query(
+        query,
+        {
+          title: answer.title,
+          salary: answer.salary,
+          department_id: answer.deptID,
+        },
+        function (err, res) {
+          if (err) throw err;
+          startMenu();
+        }
+      );
+    });
+};
+const addDept = () => {
+  inquirer
+    .prompt([
+      {
+        name: "dept",
+        type: "input",
+        message: "ENTER FULL DEPARTMENT NAME",
+      },
+    ])
+
+    .then(function (answer) {
+      console.log(answer);
+
+      var query = `INSERT INTO department SET ?`;
+      connection.query(
+        query,
+        {
+          full_name: answer.dept,
+        },
+        function (err, res) {
+          if (err) throw err;
+          startMenu();
+        }
+      );
+    });
+};
+const updateEmRole = () => {
+  inquirer
+    .prompt([
+      {
+        name: "firstname",
+        type: "input",
+        message: "EMPLOYEE FIRST NAME",
+      },
+      {
+        name: "lastname",
+        type: "input",
+        message: "EMPLOYEE LAST NAME",
+      },
+    ])
+
+    .then(function (answer) {
+      console.log(answer);
+
+      var query = ` employee SET ?`;
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        query,
+        {
+          first_name: answer.firstname,
+          last_name: answer.lastname,
+          role_id: answer.roleId,
+          manager_id: answer.managerId,
+        },
+        function (err, res) {
+          if (err) throw err;
+          startMenu();
+        }
+      );
+    });
+};
+
 connection.connect((err) => {
   if (err) throw err;
   startMenu();
