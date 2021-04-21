@@ -104,6 +104,16 @@ const addEm = () => {
         type: "input",
         message: "EMPLOYEE LAST NAME",
       },
+      {
+        name: "roleId",
+        type: "input",
+        message: "EMPLOYEE ROLE ID",
+      },
+      {
+        name: "managerId",
+        type: "input",
+        message: "EMPLOYEE MANAGER ID",
+      },
     ])
 
     .then(function (answer) {
@@ -126,6 +136,7 @@ const addEm = () => {
       );
     });
 };
+
 const addRole = () => {
   inquirer
     .prompt([
@@ -194,35 +205,30 @@ const updateEmRole = () => {
   inquirer
     .prompt([
       {
-        name: "firstname",
-        type: "input",
         message: "EMPLOYEE FIRST NAME",
+        type: "input",
+        name: "name",
       },
       {
-        name: "lastname",
-        type: "input",
         message: "EMPLOYEE LAST NAME",
+        type: "input",
+        name: "last",
+      },
+      {
+        message: "enter the new role ID:",
+        type: "number",
+        name: "role_id",
       },
     ])
-
-    .then(function (answer) {
-      console.log(answer);
-
-      var query = ` employee SET ?`;
-      // when finished prompting, insert a new item into the db with that info
+    .then(function (response) {
       connection.query(
-        query,
-        {
-          first_name: answer.firstname,
-          last_name: answer.lastname,
-          role_id: answer.roleId,
-          manager_id: answer.managerId,
-        },
-        function (err, res) {
-          if (err) throw err;
-          startMenu();
+        "UPDATE employee SET role_id = ? WHERE first_name = ? AND last_name=?",
+        [response.role_id, response.name, response.last],
+        function (err, data) {
+          console.table(data);
         }
       );
+      startMenu();
     });
 };
 
